@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prevention — Self-Diagnostic</title>
+</head>
+<body>
+
+<!-- ============================================================
+     DROP-IN BLOCK STARTS HERE
+     ============================================================ -->
+
+<style>
+  .ssi-prev {
+    --char: #323233;
+    --char-2: #333334;
+    --cyan: #56B7D1;
+    --canvas-2: #F4F4F4;
+    --white: #FFFFFF;
+    --muted: #8A8A8B;
+    --line: #E0DDD7;
+    --line-2: rgba(59,58,58,0.15);
+
+    /* Pill action colors — matched to the field-study aesthetic */
+    --pill-remeasure: #4A8A98;
+    --pill-verify:    #5BAFC4;
+    --pill-verifynow: #5BAFC4;
+    --pill-reconcile: #6B5862;
+    --pill-recalc:    #8AAE8E;
+    --pill-address:   #4A4A52;
+    --pill-revisit:   #8E8472;
+
+    background: var(--canvas-2);
+    padding: 96px 76px 81px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--char);
+  }
+  .ssi-prev * { box-sizing: border-box; }
+
+  .ssi-prev-pill {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: var(--white); padding: 8px 16px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; color: #636363;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    border: 1px solid var(--line-2);
+    margin-bottom: 32px;
+  }
+  .ssi-prev-pill::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--cyan);
+  }
+
+  .ssi-prev-h2 {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700; font-size: 80px; line-height: 1.0;
+    color: var(--char); margin: 0 0 35px;
+    letter-spacing: -0.032em; max-width: 1320px;
+  }
+
+  .ssi-prev-lede {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 18px; line-height: 1.55; color: var(--char);
+    margin: 0 0 56px; max-width: 760px; font-weight: 400;
+  }
+
+  .ssi-prev-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px; margin-bottom: 40px;
+  }
+
+  .ssi-prev-item {
+    display: flex; gap: 43px; align-items: flex-start;
+    padding: 24px 26px; background: var(--white);
+    border-radius: 12px; cursor: pointer;
+    transition: all 0.2s; user-select: none;
+    border: 1px solid transparent;
+    animation: ssi-prev-card-in both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 22%;
+    will-change: transform, opacity;
+  }
+  .ssi-prev-output {
+    animation: ssi-prev-card-in both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 24%;
+    will-change: transform, opacity;
+  }
+  @keyframes ssi-prev-card-in {
+    from { opacity: 0; transform: translateY(24px) scale(.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .ssi-prev-item:hover {
+    box-shadow: 0 6px 20px rgba(50,50,51,0.07);
+    transform: translateY(-1px);
+  }
+  .ssi-prev-item.checked { border-color: var(--char-2); }
+
+  .ssi-prev-box {
+    width: 22px; height: 22px;
+    border: 1.5px solid var(--line); border-radius: 6px;
+    flex-shrink: 0; margin-top: 1px;
+    transition: all 0.2s; position: relative; background: var(--white);
+  }
+  .ssi-prev-item.checked .ssi-prev-box {
+    background: var(--char-2); border-color: var(--char-2);
+  }
+  .ssi-prev-item.checked .ssi-prev-box::after {
+    content: "✓"; color: #FFF; position: absolute;
+    top: -2px; left: 4px; font-size: 17px; font-weight: 700;
+  }
+
+  .ssi-prev-content { flex: 1; min-width: 0; }
+
+  .ssi-prev-title {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 500; font-size: 19px; color: var(--char);
+    line-height: 1.32; margin-bottom: 8px; letter-spacing: -0.01em;
+  }
+  .ssi-prev-desc {
+    font-size: 15px; color: var(--muted);
+    line-height: 1.55; margin-bottom: 14px;
+  }
+
+  /* Inline pill — base styles + colored variants */
+  .ssi-prev-pill-inline {
+    display: inline-block; padding: 6px 14px; border-radius: 999px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 13px; font-weight: 600;
+    background: var(--canvas-2); color: var(--char);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  /* Colored variants applied by JS via data-action */
+  .ssi-prev-pill-inline[data-action="Remeasure"]   { background: var(--pill-remeasure); color: var(--white); }
+  .ssi-prev-pill-inline[data-action="Verify"]      { background: var(--pill-verify);    color: var(--white); }
+  .ssi-prev-pill-inline[data-action="Verify Now"]  { background: var(--pill-verifynow); color: var(--white); }
+  .ssi-prev-pill-inline[data-action="Reconcile"]   { background: var(--pill-reconcile); color: var(--white); }
+  .ssi-prev-pill-inline[data-action="Recalculate"] { background: var(--pill-recalc);    color: var(--white); }
+  .ssi-prev-pill-inline[data-action="Address"]     { background: var(--pill-address);   color: var(--white); }
+  .ssi-prev-pill-inline[data-action="Revisit"]     { background: var(--pill-revisit);   color: var(--white); }
+
+  .ssi-prev-output {
+    padding: 36px 40px; background: var(--white);
+    border-radius: 12px; transition: all 0.3s;
+    box-shadow: 0 6px 20px rgba(50,50,51,0.05);
+    border: 1px solid var(--line);
+  }
+  .ssi-prev-output.empty {
+    background: transparent;
+    border: 1.5px dashed var(--line); box-shadow: none;
+  }
+  .ssi-prev-output-eyebrow {
+    font-size: 13px; color: var(--cyan);
+    margin-bottom: 14px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .ssi-prev-output.empty .ssi-prev-output-eyebrow { color: var(--muted); }
+  .ssi-prev-output-title {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 700; font-size: 30px; color: var(--char);
+    margin: 0 0 14px; line-height: 1.18; letter-spacing: -0.018em;
+  }
+  .ssi-prev-output.empty .ssi-prev-output-title { color: var(--muted); }
+  .ssi-prev-output-text {
+    font-size: 14px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 22px; max-width: 640px;
+  }
+  .ssi-prev-output-list {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+
+  /* === Signup form === */
+  .ssi-prev-signup {
+    display: none;
+    margin-top: 32px;
+    padding-top: 26px;
+    border-top: 1px solid var(--line);
+  }
+  .ssi-prev-output:not(.empty) .ssi-prev-signup {
+    display: block;
+  }
+
+  .ssi-prev-signup-label {
+    display: block;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 22px; font-weight: 600;
+    color: var(--char);
+    margin: 0 0 14px;
+  }
+
+  .ssi-prev-signup-check {
+    display: flex; align-items: flex-start; gap: 10px;
+    cursor: pointer; margin: 0 0 16px;
+    user-select: none;
+  }
+  .ssi-prev-signup-check-input {
+    position: absolute; opacity: 0; pointer-events: none;
+  }
+  .ssi-prev-signup-check-box {
+    flex-shrink: 0;
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--line); border-radius: 4px;
+    background: var(--white);
+    margin-top: 2px;
+    position: relative;
+    transition: all 0.15s ease;
+  }
+  .ssi-prev-signup-check-input:checked + .ssi-prev-signup-check-box {
+    background: var(--char-2); border-color: var(--char-2);
+  }
+  .ssi-prev-signup-check-input:checked + .ssi-prev-signup-check-box::after {
+    content: "✓"; color: #FFF;
+    position: absolute; top: -3px; left: 2px;
+    font-size: 14px; font-weight: 700;
+  }
+  .ssi-prev-signup-check-text {
+    font-size: 14px; line-height: 1.5;
+    color: var(--char);
+  }
+
+  .ssi-prev-signup-row {
+    display: flex; gap: 10px; align-items: stretch;
+  }
+  .ssi-prev-signup-input {
+    flex: 1; min-width: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px; font-weight: 400;
+    color: var(--char);
+    padding: 14px 18px;
+    border: 1px solid var(--line); border-radius: 8px;
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .ssi-prev-signup-input::placeholder { color: var(--muted); }
+  .ssi-prev-signup-input:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(86, 183, 209, 0.18);
+  }
+  .ssi-prev-signup-input.is-error {
+    border-color: #C25757;
+    box-shadow: 0 0 0 3px rgba(194, 87, 87, 0.15);
+  }
+
+  .ssi-prev-signup-btn {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--white);
+    background: var(--char-2);
+    border: none; border-radius: 8px;
+    padding: 0 26px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .ssi-prev-signup-btn:hover {
+    background: #1a1a1b;
+    box-shadow: 0 4px 14px rgba(50, 50, 51, 0.18);
+  }
+  .ssi-prev-signup-btn:disabled {
+    opacity: 0.55; cursor: not-allowed;
+  }
+
+  .ssi-prev-signup-fineprint {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    margin: 12px 0 0; line-height: 1.5;
+  }
+  .ssi-prev-signup-msg {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13px; font-weight: 600;
+    margin: 10px 0 0; line-height: 1.45;
+  }
+  .ssi-prev-signup-msg.is-success { color: var(--cyan); }
+  .ssi-prev-signup-msg.is-error   { color: #C25757; }
+
+  /* ============================================================
+     RESPONSIVE BREAKPOINTS
+     ============================================================ */
+
+  /* Narrow desktop / large laptop */
+  @media (max-width: 1280px) {
+    .ssi-prev { padding: 72px 44px; }
+    .ssi-prev-h2 { font-size: 64px; }
+  }
+
+  /* Small laptop */
+  @media (max-width: 1080px) {
+    .ssi-prev { padding: 64px 36px; }
+    .ssi-prev-h2 { font-size: 54px; margin-bottom: 16px; }
+    .ssi-prev-lede { font-size: 17px; margin-bottom: 44px; }
+    .ssi-prev-item { padding: 22px 22px; }
+    .ssi-prev-title { font-size: 18px; }
+    .ssi-prev-desc { font-size: 14px; }
+    .ssi-prev-output { padding: 32px 32px; }
+    .ssi-prev-output-title { font-size: 26px; }
+  }
+
+  /* Tablet — single column grid, scaled type */
+  @media (max-width: 820px) {
+    .ssi-prev { padding: 56px 28px; }
+    .ssi-prev-pill { font-size: 13px; padding: 7px 14px; margin-bottom: 24px; }
+    .ssi-prev-h2 { font-size: 44px; letter-spacing: -0.028em; }
+    .ssi-prev-lede { font-size: 16px; margin-bottom: 36px; }
+    .ssi-prev-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .ssi-prev-item { padding: 20px 22px; gap: 30px; }
+    .ssi-prev-box { width: 20px; height: 20px; }
+    .ssi-prev-item.checked .ssi-prev-box::after { font-size: 15px; left: 3px; top: -2px; }
+    .ssi-prev-title { font-size: 18px; margin-bottom: 6px; }
+    .ssi-prev-desc { font-size: 14px; margin-bottom: 12px; }
+    .ssi-prev-output { padding: 28px 26px; }
+    .ssi-prev-output-title { font-size: 24px; }
+    .ssi-prev-output-text { font-size: 14px; margin-bottom: 18px; }
+  }
+
+  /* Mobile */
+  @media (max-width: 560px) {
+    .ssi-prev { padding: 44px 18px; }
+    .ssi-prev-pill { font-size: 13px; padding: 6px 12px; margin-bottom: 20px; }
+    .ssi-prev-h2 { font-size: 34px; line-height: 1.05; margin-bottom: 14px; }
+    .ssi-prev-lede { font-size: 15px; line-height: 1.5; margin-bottom: 28px; }
+    .ssi-prev-grid { gap: 8px; margin-bottom: 24px; }
+    .ssi-prev-item {
+      padding: 18px 18px;
+      gap: 18px;
+      border-radius: 10px;
+    }
+    .ssi-prev-title { font-size: 17px; }
+    .ssi-prev-desc { font-size: 14px; line-height: 1.5; margin-bottom: 10px; }
+    .ssi-prev-pill-inline { font-size: 13px; padding: 5px 12px; }
+    .ssi-prev-output {
+      padding: 22px 20px;
+      border-radius: 10px;
+    }
+    .ssi-prev-output-eyebrow { font-size: 13px; margin-bottom: 10px; }
+    .ssi-prev-output-title { font-size: 20px; margin-bottom: 10px; }
+    .ssi-prev-output-text { font-size: 13px; }
+
+    .ssi-prev-signup { margin-top: 24px; padding-top: 20px; }
+    .ssi-prev-signup-label { font-size: 22px; }
+    .ssi-prev-signup-check-text { font-size: 13px; }
+    .ssi-prev-signup-input { font-size: 14px; padding: 12px 14px; }
+    .ssi-prev-signup-row { flex-direction: column; gap: 8px; }
+    .ssi-prev-signup-btn { padding: 13px 20px; width: 100%; }
+    .ssi-prev-signup-fineprint { font-size: 13px; }
+  }
+
+  /* Tiny screens */
+  @media (max-width: 380px) {
+    .ssi-prev { padding: 36px 14px; }
+    .ssi-prev-h2 { font-size: 30px; }
+    .ssi-prev-item { padding: 16px 14px; gap: 14px; }
+  }
+
+  /* Accessibility */
+  .ssi-prev-item:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ssi-prev *,
+    .ssi-prev *::before,
+    .ssi-prev *::after {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      transition-duration: 0.01ms !important;
+    }
+    .ssi-prev-item:hover { transform: none; }
+  }
+</style>
+
+<div class="ssi-prev">
+  <div class="ssi-prev-pill">Prevention · Self-Diagnostic</div>
+  <h2 class="ssi-prev-h2">Where verification still has leverage.</h2>
+  <p class="ssi-prev-lede">The variance was the same one every operating event missed. The window to find it first is the window before someone else does. Tap any condition that applies — we'll match each one to a suggested action.</p>
+
+  <div class="ssi-prev-grid" id="ssi-prev-checks"></div>
+
+  <div class="ssi-prev-output empty" id="ssi-prev-output">
+    <div class="ssi-prev-output-eyebrow" id="ssi-prev-out-eyebrow">Your Diagnostic</div>
+    <h3 class="ssi-prev-output-title" id="ssi-prev-out-title">Tap any condition above to begin.</h3>
+    <p class="ssi-prev-output-text" id="ssi-prev-out-text">Each condition you flag adds a suggested action to your portfolio's verification checklist.</p>
+    <div class="ssi-prev-output-list" id="ssi-prev-out-list"></div>
+
+    <form class="ssi-prev-signup" id="ssi-prev-signup" novalidate>
+      <label class="ssi-prev-signup-label" for="ssi-prev-signup-email">Send me the matched checklist</label>
+
+      <label class="ssi-prev-signup-check" for="ssi-prev-signup-optin">
+        <input type="checkbox" id="ssi-prev-signup-optin" class="ssi-prev-signup-check-input">
+        <span class="ssi-prev-signup-check-box" aria-hidden="true"></span>
+        <span class="ssi-prev-signup-check-text">Subscribe to the Field Series and we'll send these as a downloadable verification checklist.</span>
+      </label>
+
+      <div class="ssi-prev-signup-row">
+        <input type="email" id="ssi-prev-signup-email" class="ssi-prev-signup-input"
+               placeholder="your@email.com" autocomplete="email" required>
+        <button type="submit" class="ssi-prev-signup-btn" id="ssi-prev-signup-btn">Send Checklist</button>
+      </div>
+
+      <p class="ssi-prev-signup-fineprint">We send field studies as they're available. Unsubscribe in one click.</p>
+      <p class="ssi-prev-signup-msg" id="ssi-prev-signup-msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+  var conditions = [
+    { id:"baseline",    title:"Verified rentable baseline older than 24 months",          desc:"The number was correct at acquisition. Every additional month compounds the gap.",                          pill:"Remeasure" },
+    { id:"single",      title:"Single unverified RSF figure carrying every lease",        desc:"If one number propagates across the rent roll, OM, and underwriting, the variance flows through.",         pill:"Remeasure" },
+    { id:"conflicting", title:"Conflicting figures across plan sets, rent rolls, and OMs", desc:"Inconsistency isn't a documentation problem. It's evidence the baseline isn't being maintained.",          pill:"Reconcile" },
+    { id:"expansion",   title:"Tenant expansion executed without re-verification",        desc:"Each expansion creates new variance against the baseline. Across a hold, those variances compound.",       pill:"Verify" },
+    { id:"demising",    title:"Demising-line modification pulled from architect plans",   desc:"Architect plans aren't the verified measurement file. The lease and the building reflect different things.", pill:"Recalculate" },
+    { id:"vacancy",     title:"Suite turnover without re-measurement at vacancy",         desc:"Vacancy is the single moment the number can be tested without disrupting an active lease.",                pill:"Verify" },
+    { id:"contract",    title:"Asset under contract, inspection window open",             desc:"Pre-close, the variance is a price negotiation. Three or four days of fieldwork resolves it.",              pill:"Verify Now" },
+    { id:"disposition", title:"Disposition planned within 24 months",                     desc:"The number on the rent roll today is effectively the number that closes the deal.",                         pill:"Remeasure" }
+  ];
+  var checked = {};
+
+  function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+
+  function renderChecks(){
+    var grid = document.getElementById("ssi-prev-checks");
+    var html = '';
+    for(var i=0;i<conditions.length;i++){
+      var c = conditions[i];
+      html += '<div class="ssi-prev-item'+(checked[c.id]?' checked':'')+'" data-id="'+c.id+'" tabindex="0" role="button" aria-pressed="'+(checked[c.id]?'true':'false')+'">' +
+        '<div class="ssi-prev-box"></div>' +
+        '<div class="ssi-prev-content">' +
+          '<div class="ssi-prev-title">'+c.title+'</div>' +
+          '<div class="ssi-prev-desc">'+c.desc+'</div>' +
+          '<span class="ssi-prev-pill-inline" data-action="'+escapeAttr(c.pill)+'">'+c.pill+'</span>' +
+        '</div>' +
+      '</div>';
+    }
+    grid.innerHTML = html;
+
+    document.querySelectorAll(".ssi-prev-item").forEach(function(el){
+      function toggle(){
+        var id = el.getAttribute("data-id");
+        if(checked[id]) delete checked[id]; else checked[id] = true;
+        renderChecks(); renderOutput();
+      }
+      el.addEventListener("click", toggle);
+      el.addEventListener("keydown", function(e){
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(); }
+      });
+    });
+  }
+
+  function renderOutput(){
+    var out = document.getElementById("ssi-prev-output");
+    var eyebrow = document.getElementById("ssi-prev-out-eyebrow");
+    var title = document.getElementById("ssi-prev-out-title");
+    var text = document.getElementById("ssi-prev-out-text");
+    var list = document.getElementById("ssi-prev-out-list");
+    var flagged = [];
+    for(var i=0;i<conditions.length;i++){ if(checked[conditions[i].id]) flagged.push(conditions[i]); }
+    if(flagged.length===0){
+      out.classList.add("empty");
+      eyebrow.textContent = "Your Diagnostic";
+      title.textContent = "Tap any condition above to begin.";
+      text.textContent = "Each condition you flag adds a suggested action to your portfolio's verification checklist.";
+      list.innerHTML = "";
+    } else {
+      out.classList.remove("empty");
+      eyebrow.textContent = "Your Diagnostic · "+flagged.length+" flagged";
+      title.textContent = flagged.length+" condition"+(flagged.length>1?"s":"")+" flagged. Here's your matched action set.";
+      text.textContent = "Subscribe to the Field Series and we'll send these as a downloadable verification checklist.";
+
+      // Collect unique actions in order they were flagged
+      var seen = {}, uniqueActions = [];
+      for(var m=0;m<flagged.length;m++){
+        var a = flagged[m].pill;
+        if(!seen[a]){ seen[a] = true; uniqueActions.push(a); }
+      }
+      var ph = '';
+      for(var p=0;p<uniqueActions.length;p++){
+        ph += '<span class="ssi-prev-pill-inline" data-action="'+escapeAttr(uniqueActions[p])+'">'+uniqueActions[p]+'</span>';
+      }
+      list.innerHTML = ph;
+    }
+  }
+
+  renderChecks(); renderOutput();
+
+  // Signup form handler
+  var form = document.getElementById("ssi-prev-signup");
+  if (form) {
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var input = document.getElementById("ssi-prev-signup-email");
+      var btn = document.getElementById("ssi-prev-signup-btn");
+      var msg = document.getElementById("ssi-prev-signup-msg");
+      var optin = document.getElementById("ssi-prev-signup-optin");
+      var val = (input.value || "").trim();
+      var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+
+      if (!valid) {
+        input.classList.add("is-error");
+        msg.textContent = "Please enter a valid email address.";
+        msg.className = "ssi-prev-signup-msg is-error";
+        return;
+      }
+      input.classList.remove("is-error");
+      btn.disabled = true;
+      msg.textContent = "Thanks — your matched checklist is on its way.";
+      msg.className = "ssi-prev-signup-msg is-success";
+
+      // === HOOK YOUR ENDPOINT HERE ===
+      // var flagged = Object.keys(checked);
+      // fetch('/api/signup', { method:'POST', body: JSON.stringify({
+      //   email: val, optin: optin.checked, conditions: flagged
+      // })});
+    });
+  }
+})();
+</script>
+
+<!-- ============================================================
+     DROP-IN BLOCK ENDS HERE
+     ============================================================ -->
+
+</body>
+</html>

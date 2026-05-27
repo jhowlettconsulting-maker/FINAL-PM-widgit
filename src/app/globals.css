@@ -1,0 +1,599 @@
+@import "tailwindcss";
+
+/* ============================================================
+   SSI Brand Fonts
+   ============================================================ */
+
+@font-face {
+  font-family: "New Rail Alphabet";
+  src: url("/fonts/NewRailAlphabet-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "New Rail Alphabet";
+  src: url("/fonts/NewRailAlphabet-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Maison Neue";
+  src: url("/fonts/MaisonNeue-Light.otf") format("opentype"),
+       url("/fonts/MaisonNeue-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Maison Neue";
+  src: url("/fonts/MaisonNeue-Medium.otf") format("opentype"),
+       url("/fonts/MaisonNeue-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================================
+   SSI Design System — Ported from E-merged-cd.html
+   Brand palette + tech aesthetic
+   ============================================================ */
+
+:root {
+  /* SSI Brand Palette */
+  --deep-purple: #473949;
+  --purple-dark: #362B38;
+  --purple-light: #5C4D5E;
+  --purple-glow: rgba(71, 57, 73, 0.12);
+  --purple-pale: #F3EFF4;
+
+  --black: #333333;
+  --dark-gray: #585756;
+  --medium-gray: #AEACAC;
+  --light-gray: #E1E0E0;
+  --off-white: #F5F4F5;
+  --white: #FFFFFF;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 2rem;
+  --space-lg: 4rem;
+  --space-xl: 7rem;
+
+  /* Radii + Shadows */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.07), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.09), 0 4px 16px rgba(0, 0, 0, 0.05);
+  --shadow-purple: 0 8px 32px rgba(71, 57, 73, 0.20);
+
+  --transition: 0.22s ease;
+  --max-w: 1200px;
+  --nav-h: 64px;
+}
+
+@theme inline {
+  /* Colors */
+  --color-deep-purple: #473949;
+  --color-purple-dark: #362B38;
+  --color-purple-light: #5C4D5E;
+  --color-purple-pale: #F3EFF4;
+  --color-ssi-black: #333333;
+  --color-dark-gray: #585756;
+  --color-medium-gray: #AEACAC;
+  --color-light-gray: #E1E0E0;
+  --color-off-white: #F5F4F5;
+
+  /* Typography */
+  --font-sans: "Maison Neue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-heading: "New Rail Alphabet", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", "Fira Mono", Menlo, monospace;
+  --font-stat: "New Rail Alphabet", "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 4rem;
+  --spacing-xl: 7rem;
+}
+
+/* Base styles — smooth scroll only for anchor navigation, not globally.
+   Global scroll-behavior:smooth causes bounce loops in Safari when
+   combined with scroll-triggered state changes (e.g. navbar). */
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  /* Prevent Safari elastic overscroll from amplifying micro-layout shifts */
+  overscroll-behavior-y: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* RSF Calculator sliders */
+.rsf-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 9999px;
+  background: #ddd;
+  outline: none;
+  cursor: pointer;
+}
+.rsf-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0E85A7;
+  border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.rsf-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.2);
+  box-shadow: 0 2px 8px rgba(14,133,167,0.35);
+}
+.rsf-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0E85A7;
+  border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  cursor: grab;
+}
+
+/* TruSpace tab progress animation */
+@keyframes progress {
+  from { height: 0%; }
+  to { height: 100%; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Transform-only variant — no opacity change so element is always visible.
+   Used for above-fold hero content to avoid LCP penalty from opacity:0. */
+@keyframes slideUp {
+  from { transform: translateY(18px); }
+  to { transform: translateY(0); }
+}
+
+@keyframes progressH {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+@keyframes borderShrink {
+  0% { box-shadow: inset 0 0 0 5px var(--accent); opacity: 0.9; }
+  100% { box-shadow: inset 0 0 0 0px var(--accent); opacity: 0; }
+}
+
+@keyframes drawLine {
+  0% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+
+/* Client logo carousel */
+@keyframes carousel-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes shimmer {
+  0% { box-shadow: 0 0 0 0 rgba(71, 57, 73, 0.3); }
+  50% { box-shadow: 0 0 12px 4px rgba(71, 57, 73, 0.15); }
+  100% { box-shadow: 0 0 0 0 rgba(71, 57, 73, 0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes strokePulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+}
+
+@keyframes panelPulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+  100% { box-shadow: 0 0 0 12px rgba(255, 255, 255, 0); }
+}
+
+@keyframes cardPulse {
+  0% { box-shadow: 0 20px 60px rgba(0,0,0,0.08), 0 0 0 0 rgba(255, 255, 255, 0.5); }
+  70% { box-shadow: 0 20px 60px rgba(0,0,0,0.08), 0 0 0 14px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 20px 60px rgba(0,0,0,0.08), 0 0 0 14px rgba(255, 255, 255, 0); }
+}
+
+@keyframes purplePulse {
+  0% { box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 0 0 0 rgba(71, 57, 73, 0.5); }
+  70% { box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 0 0 14px rgba(71, 57, 73, 0); }
+  100% { box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 0 0 14px rgba(71, 57, 73, 0); }
+}
+
+@keyframes wipeDown {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-wipe-down { animation: none !important; clip-path: none !important; }
+}
+
+/* Prose styling for legal/content pages */
+.prose-ssi h2 {
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--black);
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.01em;
+}
+.prose-ssi h3 {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--black);
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.prose-ssi p {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--dark-gray);
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+.prose-ssi ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.prose-ssi li {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--dark-gray);
+  line-height: 1.75;
+  margin-bottom: 0.35rem;
+}
+.prose-ssi a {
+  color: var(--deep-purple);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s;
+}
+.prose-ssi a:hover {
+  color: var(--purple-dark);
+}
+.prose-ssi address {
+  font-style: normal;
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--dark-gray);
+  line-height: 1.9;
+}
+
+/* ============================================================
+   HubSpot Embedded Form — CSS Variable Overrides (SSI Brand)
+   These variables are read by HubSpot's iframe and applied inside it.
+   See: developers.hubspot.com/docs/cms/.../forms#define-custom-styling
+   ============================================================ */
+
+:root {
+  /* Global */
+  --hsf-global__font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --hsf-global__font-size: 15px;
+  --hsf-global__color: #333333;
+  --hsf-global-error__color: #c0392b;
+
+  /* Row spacing */
+  --hsf-row__horizontal-spacing: 16px;
+  --hsf-row__vertical-spacing: 8px;
+  --hsf-module__vertical-spacing: 20px;
+
+  /* Background / wrapper */
+  --hsf-background__background-color: transparent;
+  --hsf-background__border-style: none;
+  --hsf-background__border-width: 0px;
+  --hsf-background__border-radius: 0px;
+  --hsf-background__padding: 0px;
+
+  /* Field labels */
+  --hsf-field-label__font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --hsf-field-label__font-size: 13px;
+  --hsf-field-label__color: #333333;
+  --hsf-field-label-requiredindicator__color: #473949;
+
+  /* Field inputs */
+  --hsf-field-input__font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --hsf-field-input__color: #333333;
+  --hsf-field-input__background-color: #ffffff;
+  --hsf-field-input__placeholder-color: #AEACAC;
+  --hsf-field-input__border-color: #E1E0E0;
+  --hsf-field-input__border-width: 1.5px;
+  --hsf-field-input__border-style: solid;
+  --hsf-field-input__border-radius: 12px;
+  --hsf-field-input__padding: 12px 16px;
+
+  /* Textarea */
+  --hsf-field-textarea__font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --hsf-field-textarea__color: #333333;
+  --hsf-field-textarea__background-color: #ffffff;
+  --hsf-field-textarea__placeholder-color: #AEACAC;
+  --hsf-field-textarea__border-color: #E1E0E0;
+  --hsf-field-textarea__border-width: 1.5px;
+  --hsf-field-textarea__border-style: solid;
+  --hsf-field-textarea__border-radius: 12px;
+  --hsf-field-textarea__padding: 12px 16px;
+
+  /* Submit button */
+  --hsf-button__font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --hsf-button__font-size: 15px;
+  --hsf-button__color: #ffffff;
+  --hsf-button__background-color: #473949;
+  --hsf-button__border-radius: 12px;
+  --hsf-button__padding: 14px 32px;
+  --hsf-button__box-shadow: none;
+
+  /* Error / info alerts */
+  --hsf-erroralert__font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --hsf-erroralert__font-size: 12px;
+  --hsf-erroralert__color: #c0392b;
+  --hsf-infoalert__font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --hsf-infoalert__font-size: 13px;
+  --hsf-infoalert__color: #585756;
+
+  /* Rich text (legal/GDPR copy) */
+  --hsf-richtext__font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --hsf-richtext__font-size: 12px;
+  --hsf-richtext__color: #AEACAC;
+}
+
+/* ============================================================
+   HubSpot Form Overrides — SSI Brand
+   Scoped to .ssi-hs-form to avoid bleeding elsewhere
+   ============================================================ */
+
+/* Ensure the iframe wrapper is always tall enough to show the form.
+   HubSpot resizes via postMessage after load; min-height prevents
+   the iframe collapsing to 0 before that fires. */
+.ssi-hs-form {
+  min-height: 560px;
+}
+.ssi-hs-form .hs-form-frame {
+  min-height: 560px;
+}
+.ssi-hs-form .hs-form-frame iframe {
+  min-height: 560px;
+  height: 100% !important;
+  width: 100% !important;
+  border: none !important;
+}
+
+.ssi-hs-form form,
+.ssi-hs-form .hs-form {
+  font-family: var(--font-sans) !important;
+  font-size: 15px !important;
+  color: var(--black) !important;
+}
+
+/* Fieldsets — HubSpot wraps fields in these */
+.ssi-hs-form fieldset {
+  max-width: 100% !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 0 1rem 0 !important;
+}
+
+/* Field wrapper */
+.ssi-hs-form .hs-form-field {
+  margin-bottom: 1.25rem !important;
+}
+
+/* Labels */
+.ssi-hs-form label,
+.ssi-hs-form .hs-label {
+  display: block !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--black) !important;
+  margin-bottom: 0.4rem !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* All inputs, textarea, select */
+.ssi-hs-form input[type="text"],
+.ssi-hs-form input[type="email"],
+.ssi-hs-form input[type="tel"],
+.ssi-hs-form input[type="number"],
+.ssi-hs-form input[type="url"],
+.ssi-hs-form textarea,
+.ssi-hs-form select,
+.ssi-hs-form .hs-input {
+  width: 100% !important;
+  font-family: var(--font-sans) !important;
+  font-size: 15px !important;
+  font-weight: 300 !important;
+  color: var(--black) !important;
+  background: #ffffff !important;
+  border: 1.5px solid var(--light-gray) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 0.75rem 1rem !important;
+  outline: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.ssi-hs-form input[type="text"]:focus,
+.ssi-hs-form input[type="email"]:focus,
+.ssi-hs-form input[type="tel"]:focus,
+.ssi-hs-form input[type="number"]:focus,
+.ssi-hs-form input[type="url"]:focus,
+.ssi-hs-form textarea:focus,
+.ssi-hs-form select:focus {
+  border-color: var(--deep-purple) !important;
+  box-shadow: 0 0 0 3px rgba(71, 57, 73, 0.08) !important;
+}
+
+.ssi-hs-form textarea {
+  min-height: 120px !important;
+  resize: vertical !important;
+}
+
+/* Select arrow */
+.ssi-hs-form select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23585756' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.85rem center !important;
+  background-size: 16px !important;
+  padding-right: 2.5rem !important;
+}
+
+/* Placeholder */
+.ssi-hs-form input::placeholder,
+.ssi-hs-form textarea::placeholder {
+  color: var(--medium-gray) !important;
+  font-weight: 300 !important;
+}
+
+/* Submit button */
+.ssi-hs-form input[type="submit"],
+.ssi-hs-form .hs-button {
+  font-family: var(--font-sans) !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: #ffffff !important;
+  background: var(--deep-purple) !important;
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+  padding: 0.85rem 2rem !important;
+  cursor: pointer !important;
+  transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  width: auto !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.ssi-hs-form input[type="submit"]:hover,
+.ssi-hs-form .hs-button:hover {
+  opacity: 0.9 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 32px rgba(71, 57, 73, 0.28) !important;
+}
+
+/* Submit wrapper */
+.ssi-hs-form .actions {
+  margin-top: 0.5rem !important;
+  padding: 0 !important;
+}
+
+/* Error states */
+.ssi-hs-form .hs-input.invalid.error {
+  border-color: #c0392b !important;
+}
+
+.ssi-hs-form .hs-error-msgs {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0.35rem 0 0 0 !important;
+}
+
+.ssi-hs-form .hs-error-msg {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: #c0392b !important;
+}
+
+/* Success message */
+.ssi-hs-form .submitted-message {
+  font-size: 15px !important;
+  font-weight: 300 !important;
+  color: var(--dark-gray) !important;
+  line-height: 1.65 !important;
+  padding: 2rem !important;
+  background: var(--off-white) !important;
+  border-radius: var(--radius-lg) !important;
+  border: 1.5px solid var(--light-gray) !important;
+}
+
+/* Legal / GDPR richtext */
+.ssi-hs-form .hs-richtext,
+.ssi-hs-form .legal-consent-container {
+  font-size: 12px !important;
+  font-weight: 300 !important;
+  color: var(--medium-gray) !important;
+  line-height: 1.6 !important;
+  margin-top: 0.75rem !important;
+}
+
+.ssi-hs-form .hs-richtext a,
+.ssi-hs-form .legal-consent-container a {
+  color: var(--deep-purple) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+
+/* Multi-column fields (two fields side by side) */
+.ssi-hs-form fieldset.form-columns-2 .hs-form-field {
+  width: calc(50% - 0.5rem) !important;
+  float: left !important;
+}
+.ssi-hs-form fieldset.form-columns-2 .hs-form-field:first-child {
+  margin-right: 1rem !important;
+}
+.ssi-hs-form fieldset.form-columns-2::after {
+  content: "" !important;
+  display: table !important;
+  clear: both !important;
+}
+
+/* Hide HubSpot branding if present */
+.ssi-hs-form .hs-form__virality-link {
+  display: none !important;
+}
+
+/* Hide scrollbar but keep swipe-to-scroll (mobile tab bars) */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

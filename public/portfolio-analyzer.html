@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Analyzer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Helvetica,Arial,sans-serif;background:#fff;color:#3B3A3A;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-text-size-adjust:100%;}
+html{background:#fff;}
+
+.pa{max-width:900px;margin:0 auto;padding:52px 28px 40px;position:relative;}
+.pa-logo-link{position:absolute;top:28px;left:28px;z-index:1;}
+.pa-logo{height:28px;width:auto;opacity:0.5;display:block;}
+body.dark .pa-logo-link{display:none;}
+
+/* ── Upload Section ── */
+.pa-intro{text-align:center;margin-bottom:32px;}
+.pa-intro h2{font-size:26px;font-weight:500;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;line-height:1.35;margin-bottom:12px;color:#3B3A3A;overflow-wrap:break-word;}
+.pa-badges{display:flex;justify-content:center;gap:24px;margin-top:18px;flex-wrap:wrap;}
+.pa-badge{display:flex;align-items:center;gap:8px;font-size:13px;color:#666;font-weight:500;}
+.pa-badge svg{width:18px;height:18px;color:#0E85A7;}
+
+.pa-upload{border:1.5px solid rgba(80,50,90,.18);border-radius:16px;background:rgba(80,50,90,.03);padding:36px 24px;text-align:center;margin-bottom:16px;cursor:pointer;transition:border-color .2s,background .2s;}
+.pa-upload:hover{border-color:rgba(80,50,90,.35);background:rgba(80,50,90,.06);}
+.pa-upload-icon{width:44px;height:44px;margin:0 auto 12px;background:rgba(80,50,90,.08);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.pa-upload-icon svg{width:22px;height:22px;color:#5a3a6a;}
+.pa-upload-title{font-size:16px;font-weight:600;color:#3B3A3A;margin-bottom:4px;}
+.pa-upload-formats{font-size:13px;color:#999;letter-spacing:.02em;}
+.pa-upload input[type=file]{display:none;}
+
+.pa-template{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:999px;background:rgba(80,50,90,.08);color:#5a3a6a;font-size:14px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:background .2s;margin-bottom:16px;}
+.pa-template:hover{background:rgba(80,50,90,.14);}
+.pa-template svg{width:16px;height:16px;}
+
+.pa-privacy{font-size:12px;line-height:1.6;color:#999;max-width:480px;margin:0 auto 36px;text-align:center;}
+
+/* ── Divider ── */
+.pa-divider{height:1px;background:#e8e8e8;margin:0 0 32px;}
+
+/* ── Slideshow ── */
+.pa-showcase h3{font-size:22px;font-weight:700;text-align:center;margin-bottom:6px;}
+.pa-showcase-sub{font-size:16px;color:#666;text-align:center;margin-bottom:24px;}
+
+.pa-slides{position:relative;overflow:hidden;border-radius:12px;background:#f8f8f8;border:1px solid #e8e8e8;box-shadow:0 8px 30px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06);}
+.pa-slide{display:none;flex-direction:column;}
+.pa-slide.active{display:flex;}
+
+.pa-slide-image{position:relative;width:100%;overflow:hidden;}
+.pa-slide-image img{width:100%;display:block;filter:blur(1.1px);transition:filter .3s;}
+.pa-slide-image:hover img{filter:blur(0.7px);}
+
+/* Frost overlays for sensitive data */
+.pa-frost{position:absolute;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(255,255,255,.15);border-radius:4px;}
+
+.pa-slide-caption{padding:20px 24px;background:#fff;border-top:1px solid #eee;}
+.pa-slide-caption h4{font-size:15px;font-weight:700;margin-bottom:4px;color:#3B3A3A;}
+.pa-slide-caption p{font-size:14px;color:#666;line-height:1.5;}
+.pa-anonymized{display:inline-block;padding:4px 10px;border-radius:4px;background:rgba(14,133,167,.08);color:#0E85A7;font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;float:right;margin-top:2px;}
+
+/* Nav */
+.pa-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:20px;}
+.pa-nav-btn{width:44px;height:44px;border-radius:50%;border:1px solid #ddd;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.pa-nav-btn:hover{background:#f4f4f4;border-color:#bbb;}
+.pa-nav-btn svg{width:16px;height:16px;color:#666;}
+.pa-dots{display:flex;gap:12px;}
+.pa-dot{width:10px;height:10px;border-radius:50%;background:#ddd;cursor:pointer;transition:background .2s;position:relative;}
+.pa-dot::before{content:'';position:absolute;inset:-8px;border-radius:50%;}
+.pa-dot.active{background:#0E85A7;}
+
+/* ── Bottom Form ── */
+.pa-form-title-verify,.pa-form-sub-verify,.pa-form-submit-verify,.pa-intro-verify,.pa-form-rule,.pa-form-icon-link{display:none;}
+.pa-form-section{margin-top:36px;padding-top:32px;border-top:1px solid #e8e8e8;}
+.pa-form-section h3{font-size:20px;font-weight:700;text-align:center;margin-bottom:6px;}
+.pa-form-section .pa-form-sub{font-size:15px;color:#666;text-align:center;margin-bottom:24px;line-height:1.5;}
+.pa-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:500px;margin:0 auto;}
+.pa-form label{display:grid;gap:5px;font-size:14px;color:#666;}
+.pa-form label.full-width{grid-column:1/-1;}
+.pa-form input{width:100%;height:44px;border:1px solid #ddd;border-radius:8px;padding:0 12px;font-size:16px;font-family:inherit;}
+.pa-form input:focus{outline:none;border-color:#0E85A7;}
+.pa-form-submit{grid-column:1/-1;height:44px;border:none;border-radius:1000px;background:#323233;color:#fff;font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:background .2s;margin-top:4px;}
+.pa-form-submit:hover{background:#1a1a1b;}
+.pa-form-privacy{text-align:center;font-size:12px;color:#999;margin-top:12px;max-width:500px;margin-left:auto;margin-right:auto;}
+
+.pa-success{text-align:center;padding:28px 20px;}
+.pa-success h3{font-size:20px;color:#3B3A3A;margin:0 0 8px;}
+.pa-success p{font-size:15px;color:#666;margin:0;}
+
+@media(max-width:640px){
+  .pa{padding:20px 16px 32px;}
+  .pa-intro h2{font-size:19px;}
+  .pa-badges{flex-direction:column;align-items:center;gap:10px;}
+  .pa-upload{padding:28px 18px;}
+  .pa-form{grid-template-columns:1fr;}
+  .pa-slide-caption{padding:16px 18px;}
+  .pa-slide-caption p{font-size:13px;}
+  .pa-form-section h3{font-size:18px;}
+  .pa-form-section .pa-form-sub{font-size:14px;}
+  .pa-showcase h3{font-size:19px;}
+  .pa-showcase-sub{font-size:14px;}
+  .pa-nav-btn{width:44px;height:44px;}
+  .pa-form-submit{height:48px;font-size:16px;}
+  .pa-form input{height:48px;font-size:16px;}
+  .pa-template{min-height:44px;}
+  .pa-logo-link{top:16px;left:16px;}
+  .pa-logo{height:24px;}
+  .pa-dot::before{inset:-12px;}
+}
+@media(max-width:480px){
+  .pa-badges{gap:8px;}
+  .pa-badge{font-size:12px;}
+  .pa-badge svg{width:16px;height:16px;}
+  .pa-upload-formats{font-size:12px;}
+}
+@media(max-width:380px){
+  .pa{padding:16px 12px 28px;}
+  .pa-intro h2{font-size:17px;}
+  .pa-upload{padding:24px 14px;}
+  .pa-upload-title{font-size:15px;}
+  .pa-template{font-size:13px;padding:11px 18px;}
+  .pa-privacy{font-size:11px;}
+  .pa-form label{font-size:13px;}
+  .pa-form input{font-size:16px;}
+  .pa-logo-link{top:12px;left:12px;}
+  .pa-logo{height:20px;}
+  .pa-form-section h3{font-size:16px;}
+  .pa-showcase h3{font-size:17px;}
+  .pa-showcase-sub{font-size:13px;}
+  .pa-slide-caption h4{font-size:14px;}
+  .pa-slide-caption p{font-size:12px;}
+  .pa-nav-btn{width:44px;height:44px;}
+  .pa-dot{width:8px;height:8px;}
+  .pa-dot::before{inset:-14px;}
+  .pa-form-privacy{font-size:11px;}
+}
+
+/* ── Dark / Verify Mode ── */
+body.dark{background:#2A1F2E;color:#e8e8e8;}
+html.dark,body.dark{background:#2A1F2E;}
+body.dark .pa-intro h2{color:#f0f0f0;}
+body.dark .pa-badge{color:#bbb;}
+body.dark .pa-badge svg{color:#3fb8d4;}
+body.dark .pa-upload{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04);}
+body.dark .pa-upload:hover{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.07);}
+body.dark .pa-upload-icon{background:rgba(255,255,255,.08);}
+body.dark .pa-upload-icon svg{color:#bbb;}
+body.dark .pa-upload-title{color:#e8e8e8;}
+body.dark .pa-upload-formats{color:#888;}
+body.dark .pa-template{background:rgba(255,255,255,.08);color:#ccc;}
+body.dark .pa-template:hover{background:rgba(255,255,255,.14);}
+body.dark .pa-privacy{color:#776e7d;}
+body.dark .pa-divider{background:rgba(255,255,255,.1);}
+body.dark .pa-showcase h3{color:#f0f0f0;}
+body.dark .pa-showcase-sub{color:#aaa;}
+body.dark .pa-slides{background:#352a3a;border-color:rgba(255,255,255,.08);box-shadow:0 8px 30px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.2);}
+body.dark .pa-slide-caption{background:#352a3a;border-top-color:rgba(255,255,255,.08);}
+body.dark .pa-slide-caption h4{color:#e8e8e8;}
+body.dark .pa-slide-caption p{color:#aaa;}
+body.dark .pa-anonymized{background:rgba(63,184,212,.12);color:#3fb8d4;}
+body.dark .pa-nav-btn{border-color:rgba(255,255,255,.15);background:#352a3a;}
+body.dark .pa-nav-btn:hover{background:#3f3345;border-color:rgba(255,255,255,.25);}
+body.dark .pa-nav-btn svg{color:#bbb;}
+body.dark .pa-dot{background:rgba(255,255,255,.2);}
+body.dark .pa-dot.active{background:#3fb8d4;}
+body.dark .pa-form-section{background:rgba(255,255,255,.05);border-radius:16px;padding:51px 28px 44px;box-shadow:0 4px 24px rgba(0,0,0,.25), 0 1px 6px rgba(0,0,0,.15);position:relative;overflow:hidden;}
+body.dark .pa-form-icon-link{position:absolute;top:21px;left:23px;z-index:1;}
+body.dark .pa-form-section .pa-form-icon{height:28px;width:auto;opacity:0.23;filter:brightness(0) invert(1);display:block;}
+body.dark .pa-form-section h3{color:#f0f0f0;}
+body.dark .pa-form-title-verify{font-size:24px;font-weight:500;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;line-height:1.35;margin-bottom:0;}
+body.dark .pa-form-rule{height:1px;background:rgba(255,255,255,.08);margin:20px auto 10px;max-width:65%;}
+body.dark .pa-form-section .pa-form-sub{color:#aaa;}
+body.dark .pa-form label{color:#bbb;}
+body.dark .pa-form input{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#e8e8e8;}
+body.dark .pa-form input:focus{border-color:#3fb8d4;}
+body.dark .pa-form input::placeholder{color:#776e7d;}
+body.dark .pa-form-submit{background:rgba(255,255,255,.12);color:#f0f0f0;border:1px solid rgba(255,255,255,.18);}
+body.dark .pa-form-submit:hover{background:rgba(255,255,255,.18);}
+body.dark .pa-form-title-default,body.dark .pa-form-sub-default,body.dark .pa-form-submit-default{display:none;}
+body.dark .pa-form-title-verify,body.dark .pa-form-sub-verify,body.dark .pa-form-submit-verify,body.dark .pa-form-rule{display:block;}
+body.dark .pa-form-icon-link{display:block;}
+body.dark .pa-form-privacy{color:#776e7d;}
+body.dark .pa-success h3{color:#f0f0f0;}
+body.dark .pa-success p{color:#aaa;}
+body.dark .pa-intro-default{display:none;}
+body.dark .pa-intro-verify{display:block;}
+body.dark .pa-logo{filter:brightness(0) invert(1);opacity:0.2;}
+
+/* Reorder layout in verify mode */
+body.dark .pa{display:flex;flex-direction:column;}
+body.dark .pa-form-section{order:1;margin-top:0;border-top:none;margin-bottom:32px;}
+body.dark .pa-intro{order:2;padding-top:10px;}
+body.dark .pa-upload{order:3;}
+body.dark .pa > div[style]{order:4;}
+body.dark .pa-privacy{order:5;}
+body.dark .pa-divider{order:6;}
+body.dark .pa-showcase{order:7;}
+
+/* ── Dark mode responsive ── */
+@media(max-width:640px){
+  body.dark .pa-form-section{padding:44px 20px 36px;border-radius:12px;}
+  body.dark .pa-form-title-verify{font-size:20px;}
+  body.dark .pa-form-icon-link{top:16px;left:18px;}
+  body.dark .pa-form-section .pa-form-icon{height:22px;}
+  body.dark .pa-intro h2{font-size:18px;}
+  body.dark .pa-form{max-width:100%;}
+}
+@media(max-width:380px){
+  body.dark .pa-form-section{padding:40px 16px 32px;border-radius:10px;}
+  body.dark .pa-form-title-verify{font-size:18px;}
+  body.dark .pa-form-icon-link{top:14px;left:14px;}
+  body.dark .pa-form-section .pa-form-icon{height:18px;}
+  body.dark .pa-intro h2{font-size:16px;}
+}
+</style>
+</head>
+<body>
+<div class="pa">
+  <a href="https://www.stevensonsystems.com" target="_blank" rel="noopener" class="pa-logo-link"><img class="pa-logo" src="/images/ssi-logo-full.svg" alt="Stevenson Systems"></a>
+  <!-- Upload Section -->
+  <div class="pa-intro">
+    <h2 class="pa-intro-default">See the full opportunity behind your results<br>with an actionable dashboard analysis within 1 business day.</h2>
+    <h2 class="pa-intro-verify">Or upload your rent roll or stacking plan and have a<br>detailed dashboard analysis delivered within 1 business day.</h2>
+    <div class="pa-badges">
+      <span class="pa-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Free Analysis</span>
+      <span class="pa-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Any Format</span>
+      <span class="pa-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Private & Secure</span>
+      <span class="pa-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>Zero Commitment</span>
+    </div>
+  </div>
+
+  <label class="pa-upload" id="uploadArea">
+    <div class="pa-upload-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 0l-4 4m4-4l4 4"/><path d="M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg>
+    </div>
+    <div class="pa-upload-title">Upload rent roll or stacking plan</div>
+    <div class="pa-upload-formats">.xlsx · .csv · .pdf · .jpg · .png</div>
+    <input type="file" accept=".xlsx,.csv,.pdf,.jpg,.jpeg,.png" id="fileInput">
+  </label>
+
+  <div style="text-align:center;">
+    <button class="pa-template" onclick="window.parent.postMessage('download-template','*')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg>
+      Download our template
+    </button>
+  </div>
+
+  <p class="pa-privacy">Your data stays private. Files are processed in memory and never stored on our servers. Analysis does not retain or train on submitted data.<br>Your document is discarded the moment results are returned.</p>
+
+  <div class="pa-divider"></div>
+
+  <!-- Dashboard Showcase -->
+  <div class="pa-showcase">
+    <h3>What You Receive</h3>
+    <p class="pa-showcase-sub">Your custom Proximity to Revenue Analysis dashboard</p>
+
+    <div class="pa-slides" id="slides">
+      <!-- Slide 1: Portfolio Overview -->
+      <div class="pa-slide active" data-index="0">
+        <div class="pa-slide-image">
+          <img src="/images/pa-overview.jpg" alt="Portfolio overview dashboard showing KPI cards, building breakdowns, and revenue opportunity analysis">
+        </div>
+        <div class="pa-slide-caption">
+          <span class="pa-anonymized">Sample Data</span>
+          <h4>Portfolio Overview</h4>
+          <p>Every building scored by capturable SF, revenue opportunity, and valuation impact. Adjust capture rate, leasing probability, and cap rate in real time.</p>
+        </div>
+      </div>
+
+      <!-- Slide 2: Revenue Charts -->
+      <div class="pa-slide" data-index="1">
+        <div class="pa-slide-image">
+          <img src="/images/pa-charts.png" alt="Revenue charts showing opportunity by building, revenue pipeline, lease type breakdown, and capturable SF analysis">
+        </div>
+        <div class="pa-slide-caption">
+          <span class="pa-anonymized">Sample Data</span>
+          <h4>Revenue Pipeline</h4>
+          <p>See where revenue sits by building, by year, by lease type — and how it compounds over your hold period. Bars show new capture, lines show recurring total.</p>
+        </div>
+      </div>
+
+      <!-- Slide 3: Lease Detail -->
+      <div class="pa-slide" data-index="2">
+        <div class="pa-slide-image">
+          <img src="/images/pa-leases.png" alt="Lease detail table showing every tenant, suite, capture rate, and revenue opportunity ranked by value">
+        </div>
+        <div class="pa-slide-caption">
+          <span class="pa-anonymized">Sample Data</span>
+          <h4>Lease Detail</h4>
+          <p>Every lease. Every suite. Every dollar of capturable revenue — ranked, filterable by building, year, and type. Exportable to PDF.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <div class="pa-nav">
+      <button class="pa-nav-btn" id="prevBtn" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="pa-dots" id="dots">
+        <span class="pa-dot active" data-index="0"></span>
+        <span class="pa-dot" data-index="1"></span>
+        <span class="pa-dot" data-index="2"></span>
+      </div>
+      <button class="pa-nav-btn" id="nextBtn" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom Form -->
+  <div class="pa-form-section" id="formSection">
+    <a href="https://www.stevensonsystems.com" target="_blank" rel="noopener" class="pa-form-icon-link"><img class="pa-form-icon" src="/images/ssi-logo-full.svg" alt="Stevenson Systems"></a>
+    <h3 class="pa-form-title-default">Request a Portfolio Analysis</h3>
+    <h3 class="pa-form-title-verify">Book a time to verify that your rent roll is<br>anchored to the full revenue potential within your asset.</h3>
+    <div class="pa-form-rule"></div>
+    <p class="pa-form-sub pa-form-sub-default">Upload above for instant results, or submit your details<br>and we'll run it for you within 1 business day.</p>
+    <p class="pa-form-sub pa-form-sub-verify"></p>
+    <form class="pa-form" id="paForm" onsubmit="submitPA(event)">
+      <label>Name<input type="text" name="name" required placeholder="Your name"></label>
+      <label>Email<input type="email" name="email" required placeholder="Work email"></label>
+      <label class="full-width">Portfolio / Building Name<input type="text" name="portfolio" placeholder="Optional, but helps tailor your review"></label>
+      <button type="submit" class="pa-form-submit pa-form-submit-default">Request a Portfolio Analysis</button>
+      <button type="submit" class="pa-form-submit pa-form-submit-verify">Schedule a Walkthrough</button>
+    </form>
+    <p class="pa-form-privacy">We'll respond within 1 business day. No spam, no sales sequences.</p>
+  </div>
+</div>
+
+<script>
+// Dark / Verify mode detection
+if (new URLSearchParams(window.location.search).get('mode') === 'verify') {
+  document.body.classList.add('dark');
+  document.documentElement.style.background = '#2A1F2E';
+}
+
+// Slideshow
+var current = 0;
+var slides = document.querySelectorAll('.pa-slide');
+var dots = document.querySelectorAll('.pa-dot');
+var total = slides.length;
+
+function goTo(i) {
+  slides[current].classList.remove('active');
+  dots[current].classList.remove('active');
+  current = (i + total) % total;
+  slides[current].classList.add('active');
+  dots[current].classList.add('active');
+}
+
+document.getElementById('prevBtn').onclick = function() { goTo(current - 1); };
+document.getElementById('nextBtn').onclick = function() { goTo(current + 1); };
+dots.forEach(function(d) {
+  d.onclick = function() { goTo(parseInt(d.dataset.index)); };
+});
+
+// Auto-advance every 5s, pause on hover AND touch
+var autoTimer = setInterval(function() { goTo(current + 1); }, 5000);
+var slidesEl = document.querySelector('.pa-slides');
+function pauseAuto() { clearInterval(autoTimer); }
+function resumeAuto() { autoTimer = setInterval(function() { goTo(current + 1); }, 5000); }
+slidesEl.addEventListener('mouseenter', pauseAuto);
+slidesEl.addEventListener('mouseleave', resumeAuto);
+slidesEl.addEventListener('touchstart', function() { pauseAuto(); setTimeout(resumeAuto, 10000); }, {passive:true});
+
+// Upload area
+document.getElementById('uploadArea').onclick = function(e) {
+  document.getElementById('fileInput').click();
+};
+document.getElementById('fileInput').onchange = function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  window.parent.postMessage({ type: 'file-uploaded', name: file.name, size: file.size }, '*');
+  var area = document.getElementById('uploadArea');
+  area.innerHTML = '<div class="pa-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0E85A7" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><div class="pa-upload-title">' + file.name + '</div><div class="pa-upload-formats">Uploaded — we\'ll process this with your request below</div>';
+};
+
+// Form submit
+function submitPA(e) {
+  e.preventDefault();
+  var f = document.getElementById('paForm');
+  var data = {
+    name: f.querySelector('[name=name]').value,
+    email: f.querySelector('[name=email]').value,
+    portfolio: f.querySelector('[name=portfolio]').value
+  };
+  var section = document.getElementById('formSection');
+  section.innerHTML = '<div class="pa-success"><h3>Request Received</h3><p>We\'ll deliver your Proximity to Revenue Analysis for <strong>' + data.portfolio + '</strong> within 1 business day.</p></div>';
+  window.parent.postMessage({ type: 'pa-submitted', data: data }, '*');
+}
+</script>
+</body>
+</html>
