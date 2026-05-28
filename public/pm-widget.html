@@ -787,6 +787,18 @@ body { min-height: 100vh; padding: 48px 20px; }
 .result-panel::after {
   display: none;
 }
+#result-panel-03.result-panel--time::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 2;
+  left: 1.9%;
+  top: 69.4%;
+  width: 8.8%;
+  height: 13.2%;
+  background: #e6f9ff;
+  pointer-events: none;
+}
 #result-panel-01 { --notch-left: 25%; --notch-fill: #fff; }
 #result-panel-02 { --notch-left: 75%; --notch-fill: #123846; }
 #result-panel-03 { --notch-left: 25%; --notch-fill: #fff; }
@@ -817,12 +829,12 @@ body { min-height: 100vh; padding: 48px 20px; }
   line-height: 1;
 }
 .result-hours-overlay--sources {
-  left: 2.8%;
-  top: 75.2%;
-  min-width: 198px;
-  padding: 3px 6px 3px 58px;
+  left: calc(2.8% + 43px);
+  top: calc(75.2% - 10px);
+  min-width: 0;
+  padding: 3px 10px;
   justify-content: flex-start;
-  background: #e6f9ff;
+  background: #fff;
   font-size: clamp(13px, 1.42vw, 20px);
 }
 .result-hours-overlay--documents {
@@ -836,7 +848,7 @@ body { min-height: 100vh; padding: 48px 20px; }
 }
 .result-hours-overlay--total {
   right: 2.2%;
-  top: 9.6%;
+  top: 14.6%;
   width: 28%;
   height: 78%;
   min-width: 210px;
